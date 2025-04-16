@@ -99,6 +99,10 @@ public class SistemWarung {
             System.out.println("5. Urutkan Bahan Baku berdasarkan Nama");
             System.out.println("0. Keluar");
             System.out.print("Pilih menu: ");
+            while (!input.hasNextInt()) {
+                System.out.print("Input tidak valid. Pilih menu: ");
+                input.next();
+            }
             pilihan = input.nextInt();
             input.nextLine();
 
@@ -108,7 +112,7 @@ public class SistemWarung {
                 case 3 -> catatTransaksi();
                 case 4 -> cariBahan();
                 case 5 -> urutkanBahan();
-                case 0 -> System.out.println("Terima kasih!");
+                case 0 -> System.out.println("Terima kasih telah menggunakan sistem.");
                 default -> System.out.println("Pilihan tidak valid!");
             }
         } while (pilihan != 0);
@@ -124,6 +128,10 @@ public class SistemWarung {
             System.out.println("4. Hapus Bahan");
             System.out.println("0. Kembali");
             System.out.print("Pilih: ");
+            while (!input.hasNextInt()) {
+                System.out.print("Input tidak valid. Pilih: ");
+                input.next();
+            }
             pilih = input.nextInt();
             input.nextLine();
 
@@ -135,25 +143,46 @@ public class SistemWarung {
                     int stok = input.nextInt();
                     System.out.print("Harga: ");
                     double harga = input.nextDouble();
+                    input.nextLine();
                     daftarBahan.add(new BahanBaku(nama, stok, harga));
+                    System.out.println("Bahan berhasil ditambahkan!");
                 }
-                case 2 -> daftarBahan.forEach(BahanBaku::tampilkan);
+                case 2 -> {
+                    if (daftarBahan.isEmpty()) {
+                        System.out.println("Tidak ada data bahan.");
+                    } else {
+                        daftarBahan.forEach(BahanBaku::tampilkan);
+                    }
+                }
                 case 3 -> {
                     System.out.print("Nama bahan yang ingin diedit: ");
                     String namaEdit = input.nextLine();
+                    boolean ditemukan = false;
                     for (BahanBaku b : daftarBahan) {
                         if (b.getNama().equalsIgnoreCase(namaEdit)) {
                             System.out.print("Stok baru: ");
                             b.setStok(input.nextInt());
                             System.out.print("Harga baru: ");
                             b.setHarga(input.nextDouble());
+                            input.nextLine();
+                            System.out.println("Data berhasil diupdate.");
+                            ditemukan = true;
+                            break;
                         }
+                    }
+                    if (!ditemukan) {
+                        System.out.println("Bahan tidak ditemukan.");
                     }
                 }
                 case 4 -> {
                     System.out.print("Nama bahan yang ingin dihapus: ");
                     String namaHapus = input.nextLine();
-                    daftarBahan.removeIf(b -> b.getNama().equalsIgnoreCase(namaHapus));
+                    boolean removed = daftarBahan.removeIf(b -> b.getNama().equalsIgnoreCase(namaHapus));
+                    if (removed) {
+                        System.out.println("Bahan berhasil dihapus.");
+                    } else {
+                        System.out.println("Bahan tidak ditemukan.");
+                    }
                 }
             }
         } while (pilih != 0);
@@ -169,8 +198,9 @@ public class SistemWarung {
         daftarSupplier.add(new Supplier(nama, kontak, alamat));
 
         System.out.println("\nDaftar Supplier:");
-        for (Supplier s : daftarSupplier)
+        for (Supplier s : daftarSupplier) {
             s.display();
+        }
     }
 
     public static void catatTransaksi() {
@@ -178,6 +208,7 @@ public class SistemWarung {
         String namaBarang = input.nextLine();
         System.out.print("Jumlah beli: ");
         int jumlah = input.nextInt();
+        input.nextLine();
 
         for (BahanBaku b : daftarBahan) {
             if (b.getNama().equalsIgnoreCase(namaBarang)) {
@@ -203,8 +234,12 @@ public class SistemWarung {
     }
 
     public static void urutkanBahan() {
-        daftarBahan.sort(Comparator.comparing(BahanBaku::getNama));
-        System.out.println("\nData setelah diurutkan:");
-        daftarBahan.forEach(BahanBaku::tampilkan);
+        if (daftarBahan.isEmpty()) {
+            System.out.println("Belum ada data bahan untuk diurutkan.");
+        } else {
+            daftarBahan.sort(Comparator.comparing(BahanBaku::getNama));
+            System.out.println("\nData setelah diurutkan:");
+            daftarBahan.forEach(BahanBaku::tampilkan);
+        }
     }
 }
